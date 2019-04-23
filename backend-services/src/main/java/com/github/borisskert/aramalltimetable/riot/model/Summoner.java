@@ -1,4 +1,4 @@
-package com.github.borisskert.aramalltimetable.riot;
+package com.github.borisskert.aramalltimetable.riot.model;
 
 public class Summoner {
     private String name;

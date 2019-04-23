@@ -1,7 +1,7 @@
 package com.github.borisskert.aramalltimetable.summoner;
 
 import com.github.borisskert.aramalltimetable.riot.LeagueOfLegendsClient;
-import com.github.borisskert.aramalltimetable.riot.Summoner;
+import com.github.borisskert.aramalltimetable.riot.model.Summoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
