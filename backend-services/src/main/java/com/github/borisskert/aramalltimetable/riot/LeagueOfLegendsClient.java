@@ -1,11 +1,11 @@
 package com.github.borisskert.aramalltimetable.riot;
 
+import com.github.borisskert.aramalltimetable.riot.model.Match;
 import com.github.borisskert.aramalltimetable.riot.model.MatchList;
 import com.github.borisskert.aramalltimetable.riot.model.Summoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 
@@ -14,10 +14,10 @@ public class LeagueOfLegendsClient {
     private static final String ARAM_QUEUE_ID = "450";
 
     private final RiotProperties properties;
-    private final RestTemplate restTemplate;
+    private final RiotRestTemplate restTemplate;
 
     @Autowired
-    public LeagueOfLegendsClient(RiotProperties properties, RestTemplate restTemplate) {
+    public LeagueOfLegendsClient(RiotProperties properties, RiotRestTemplate restTemplate) {
         this.properties = properties;
         this.restTemplate = restTemplate;
     }
@@ -57,6 +57,24 @@ public class LeagueOfLegendsClient {
                         "&beginIndex={beginIndex}" +
                         "&endIndex={endIndex}",
                 MatchList.class,
+                uriVariables
+        );
+
+        return response.getBody();
+    }
+
+    /**
+     * https://developer.riotgames.com/api-methods/#match-v4/GET_getMatch
+     */
+    public Match getMatch(Long gameId) {
+        HashMap<String, String> uriVariables = new HashMap<>();
+        uriVariables.put("apiKey", properties.getApiKey());
+        uriVariables.put("gameId", gameId.toString());
+
+        ResponseEntity<Match> response = restTemplate.getForEntity(
+                properties.getBaseUrl() + "/match/v4/matches/{gameId}" +
+                        "?api_key={apiKey}",
+                Match.class,
                 uriVariables
         );
 

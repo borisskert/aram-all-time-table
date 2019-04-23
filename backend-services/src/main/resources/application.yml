@@ -1,3 +1,10 @@
 riot:
   base-url: https://euw1.api.riotgames.com/lol
   api-key: <place here your api key>
+  request-limits:
+    - request-count: 100
+      unit-count: 2
+      unit: MINUTES
+    - request-count: 20
+      unit-count: 1
+      unit: SECONDS

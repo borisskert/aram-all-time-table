@@ -1,0 +1,4 @@
+logging:
+  level:
+    com.github.borisskert.aramalltimetable.riot.RiotRestTemplate: debug
+    com.github.borisskert.aramalltimetable.riot.RiotRequestThrottling: debug
