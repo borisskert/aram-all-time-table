@@ -1,0 +1,3 @@
+riot:
+  base-url: https://euw1.api.riotgames.com/lol
+  api-key: <place here your api key>
