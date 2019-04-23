@@ -31,7 +31,7 @@ public class RiotRestTemplate {
         ResponseEntity<T> forEntity;
         try {
             forEntity = restTemplate.getForEntity(url, responseType, uriVariables);
-        } catch (HttpServerErrorException.ServiceUnavailable e) {
+        } catch (HttpServerErrorException e) {
             recordRequestTime();
 
             logger.debug("Retry request...");
