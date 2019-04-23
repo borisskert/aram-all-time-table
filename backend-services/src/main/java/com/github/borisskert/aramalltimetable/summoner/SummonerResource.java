@@ -1,4 +1,4 @@
-package com.github.borisskert.aramalltimetable.leagueoflegends;
+package com.github.borisskert.aramalltimetable.summoner;
 
 import com.github.borisskert.aramalltimetable.riot.Summoner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/lol")
-public class LeagueOfLegendsResource {
+public class SummonerResource {
 
-    private final LeagueOfLegendsService leagueOfLegends;
+    private final SummonerService leagueOfLegends;
 
     @Autowired
-    public LeagueOfLegendsResource(LeagueOfLegendsService leagueOfLegends) {
+    public SummonerResource(SummonerService leagueOfLegends) {
         this.leagueOfLegends = leagueOfLegends;
     }
 
