@@ -10,8 +10,8 @@ import java.util.Optional;
 
 @Service
 public class SummonerStore {
+    private static final String SUMMONER_STORE_NAME = "summoner";
 
-    public static final String SUMMONER_STORE_NAME = "summoner";
     private final Store store;
 
     @Autowired

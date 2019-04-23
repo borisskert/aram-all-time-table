@@ -8,8 +8,8 @@ import java.util.Optional;
 
 @Service
 public class MatchReferenceStore {
+    private static final String MATCHLIST_STORE_NAME = "matchreference";
 
-    public static final String MATCHLIST_STORE_NAME = "matchreference";
     private final Store store;
 
     @Autowired
