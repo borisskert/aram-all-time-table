@@ -2,6 +2,7 @@ package com.github.borisskert.aramalltimetable.riot;
 
 import com.github.borisskert.aramalltimetable.riot.model.Match;
 import com.github.borisskert.aramalltimetable.riot.model.MatchList;
+import com.github.borisskert.aramalltimetable.riot.model.Queue;
 import com.github.borisskert.aramalltimetable.riot.model.Summoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +12,6 @@ import java.util.HashMap;
 
 @Service
 public class LeagueOfLegendsClient {
-    private static final String ARAM_QUEUE_ID = "450";
-
     private final RiotProperties properties;
     private final RiotRestTemplate restTemplate;
 
@@ -46,7 +45,7 @@ public class LeagueOfLegendsClient {
         HashMap<String, String> uriVariables = new HashMap<>();
         uriVariables.put("accountId", encryptedAccountId);
         uriVariables.put("apiKey", properties.getApiKey());
-        uriVariables.put("queue", ARAM_QUEUE_ID);
+        uriVariables.put("queue", Queue.ARAM.getValue());
         uriVariables.put("beginIndex", beginIndex.toString());
         uriVariables.put("endIndex", endIndex.toString());
 
