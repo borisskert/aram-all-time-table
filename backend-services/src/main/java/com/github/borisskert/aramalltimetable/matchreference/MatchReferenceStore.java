@@ -24,4 +24,8 @@ public class MatchReferenceStore {
     public void create(String id, MatchReferences matchReferences) {
         store.create(MATCHLIST_STORE_NAME, id, matchReferences);
     }
+
+    public void update(String id, MatchReferences matchReferences) {
+        store.update(MATCHLIST_STORE_NAME, id, matchReferences);
+    }
 }

@@ -57,6 +57,11 @@ public class Store {
         create(store, id, document);
     }
 
+    public <T> void update(final String store, final String id, final T obj) {
+        Document document = CloneUtils.deepClone(obj, Document.class, MONGO_ID_PROPERTY_NAME);
+        update(store, id, document);
+    }
+
     public void update(final String store, final String id, final Document document) {
         MongoCollection<Document> collection = getCollection(store);
         UpdateResult updateResult = collection.replaceOne(idFilter(id), document);

@@ -26,7 +26,17 @@ public class MatchService {
     }
 
     public List<Match> getMatches(String summonerName) {
-        MatchReferences matchReferences = matchReferenceService.getMatchReferences(summonerName);
+        MatchReferences matchReferences = matchReferenceService.getMatchReferencesBySummonerName(summonerName);
+        return matchReferences.getMatches().stream().map(m -> getMatch(m.getGameId())).collect(Collectors.toList());
+    }
+
+    public List<Match> getMatchesByAccountId(String accountId) {
+        MatchReferences matchReferences = matchReferenceService.getMatchReferencesByAccountId(accountId);
+        return matchReferences.getMatches().stream().map(m -> getMatch(m.getGameId())).collect(Collectors.toList());
+    }
+
+    public List<Match> refreshMatches(String accountId) {
+        MatchReferences matchReferences = matchReferenceService.refreshMatchReferencesByAccountId(accountId);
         return matchReferences.getMatches().stream().map(m -> getMatch(m.getGameId())).collect(Collectors.toList());
     }
 

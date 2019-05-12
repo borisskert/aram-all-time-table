@@ -1,10 +1,7 @@
 package com.github.borisskert.aramalltimetable.queuestatistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/lol")
@@ -19,6 +16,11 @@ public class QueueStatisticResource {
 
     @GetMapping(value = "/queuestatistics", params = "summoner")
     public QueueStatistics createStats(@RequestParam("summoner") String summonerName) {
-        return queueStatisticsService.getQueueStatistics(summonerName);
+        return queueStatisticsService.getQueueStatisticsBySummonerName(summonerName);
+    }
+
+    @PostMapping(value = "/queuestatistics", params = "summoner")
+    public void updateStats(@RequestParam("summoner") String summonerName) {
+        queueStatisticsService.refreshQueueStatisticsBySummonerName(summonerName);
     }
 }

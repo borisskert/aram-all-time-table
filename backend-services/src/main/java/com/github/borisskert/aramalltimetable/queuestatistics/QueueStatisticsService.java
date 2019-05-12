@@ -25,14 +25,15 @@ public class QueueStatisticsService {
         this.queueStatisticsStore = queueStatisticsStore;
     }
 
-    public QueueStatistics getQueueStatistics(String summonerName) {
+    public QueueStatistics getQueueStatisticsBySummonerName(String summonerName) {
         Summoner summoner = summonerService.getSummoner(summonerName);
         Optional<QueueStatistics> maybeQueueStatistics = queueStatisticsStore.find(summoner.getAccountId());
 
         if(maybeQueueStatistics.isPresent()) {
             return maybeQueueStatistics.get();
         } else {
-            QueueStatistics queueStatistics = calculateQueueStatistics(summonerName);
+            List<Match> matches = matchService.getMatches(summoner.getAccountId());
+            QueueStatistics queueStatistics = calculateQueueStatistics(matches, summoner.getAccountId());
 
             queueStatisticsStore.create(summoner.getAccountId(), queueStatistics);
 
@@ -40,9 +41,83 @@ public class QueueStatisticsService {
         }
     }
 
-    private QueueStatistics calculateQueueStatistics(String summonerName) {
+    public void refreshQueueStatisticsBySummonerName(String summonerName) {
+        Summoner summoner = summonerService.getSummoner(summonerName);
+        Optional<QueueStatistics> maybeQueueStatistics = queueStatisticsStore.find(summoner.getAccountId());
+        List<Match> matches = matchService.refreshMatches(summoner.getAccountId());
+        QueueStatistics queueStatistics = calculateQueueStatistics(matches, summoner.getAccountId());
+
+        if(maybeQueueStatistics.isPresent()) {
+            queueStatisticsStore.update(summoner.getAccountId(), queueStatistics);
+        } else {
+            queueStatisticsStore.create(summoner.getAccountId(), queueStatistics);
+        }
+    }
+
+    public QueueStatistics getQueueStatisticsByAccountId(String accountId) {
+        Optional<QueueStatistics> maybeQueueStatistics = queueStatisticsStore.find(accountId);
+
+        if(maybeQueueStatistics.isPresent()) {
+            return maybeQueueStatistics.get();
+        } else {
+            List<Match> matches = matchService.getMatchesByAccountId(accountId);
+            QueueStatistics queueStatistics = calculateQueueStatistics(matches, accountId);
+
+            queueStatisticsStore.create(accountId, queueStatistics);
+
+            return queueStatistics;
+        }
+    }
+//
+//    private QueueStatistics calculateQueueStatistics(String accountId) {
+//        QueueStatistics queueStatistics = new QueueStatistics();
+//        List<Match> matches = matchService.getMatchesByAccountId(accountId);
+//
+//        int games = 0;
+//        int victories = 0;
+//        int defeats = 0;
+//
+//        QueueStatistic queueStatistic = new QueueStatistic();
+//        for (Match match : matches) {
+//            List<Match.ParticipantIdentity> identities = match.getParticipantIdentities();
+//            List<Match.Participant> participants = match.getParticipants();
+//
+//            Match.ParticipantIdentity ownIdentity = identities.stream()
+//                    .filter(i -> i.getPlayer().getAccountId().equals(accountId))
+//                    .findFirst()
+//                    .get();
+//
+//            Match.Participant ownParticipant = participants.stream()
+//                    .filter(p -> p.getParticipantId().equals(ownIdentity.getParticipantId()))
+//                    .findFirst()
+//                    .get();
+//
+//            Match.Team ownTeam = match.getTeams()
+//                    .stream()
+//                    .filter(t -> t.getTeamId().equals(ownParticipant.getTeamId()))
+//                    .findFirst()
+//                    .get();
+//
+//            if(ownTeam.getWin().equals("Win")) {
+//                victories++;
+//            } else {
+//                defeats++;
+//            }
+//
+//            games++;
+//        }
+//
+//        queueStatistic.setGames(games);
+//        queueStatistic.setVictories(victories);
+//        queueStatistic.setDefeats(defeats);
+//
+//        queueStatistics.getQueueStatistics().put(Queue.ARAM, queueStatistic);
+//
+//        return queueStatistics;
+//    }
+//
+    private QueueStatistics calculateQueueStatistics(List<Match> matches, String accountId) {
         QueueStatistics queueStatistics = new QueueStatistics();
-        List<Match> matches = matchService.getMatches(summonerName);
 
         int games = 0;
         int victories = 0;
@@ -54,7 +129,7 @@ public class QueueStatisticsService {
             List<Match.Participant> participants = match.getParticipants();
 
             Match.ParticipantIdentity ownIdentity = identities.stream()
-                    .filter(i -> i.getPlayer().getSummonerName().equals(summonerName))
+                    .filter(i -> i.getPlayer().getAccountId().equals(accountId))
                     .findFirst()
                     .get();
 

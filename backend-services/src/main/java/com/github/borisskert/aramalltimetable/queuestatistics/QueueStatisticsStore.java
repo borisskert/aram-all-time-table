@@ -24,4 +24,8 @@ public class QueueStatisticsStore {
     public void create(String id, QueueStatistics queueStatistics) {
         store.create(QUEUESTATISTICS_STORE_NAME, id, queueStatistics);
     }
+
+    public void update(String id, QueueStatistics queueStatistics) {
+        store.update(QUEUESTATISTICS_STORE_NAME, id, queueStatistics);
+    }
 }

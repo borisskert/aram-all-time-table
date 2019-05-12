@@ -19,6 +19,6 @@ public class MatchReferenceResource {
 
     @GetMapping(value = "/matchreference", params = "summoner")
     public MatchReferences createStats(@RequestParam("summoner") String summonerName) {
-        return matchReferenceService.getMatchReferences(summonerName);
+        return matchReferenceService.getMatchReferencesBySummonerName(summonerName);
     }
 }

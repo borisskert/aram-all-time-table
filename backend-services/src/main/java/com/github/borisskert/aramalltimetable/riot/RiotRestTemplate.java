@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -26,40 +27,41 @@ public class RiotRestTemplate {
     }
 
     public <T> ResponseEntity<T> getForEntity(String url, Class<T> responseType, Map<String, ?> uriVariables) throws RestClientException {
-        throttleRequests();
+        ResponseEntity<T> response = null;
+        do {
+            requestThrottling.recordRequestTime();
+            throttleRequests();
 
-        ResponseEntity<T> forEntity;
-        try {
-            forEntity = restTemplate.getForEntity(url, responseType, uriVariables);
-        } catch (HttpServerErrorException e) {
-            recordRequestTime();
+            try {
+                response = restTemplate.getForEntity(url, responseType, uriVariables);
+            } catch (HttpServerErrorException e) {
+                logger.debug("Retry request...");
+            } catch (HttpClientErrorException e) {
+                logger.debug("Wait a second...");
+                waitTime(1000L);
+                logger.debug("Retry request...");
+            }
+        } while(response == null);
 
-            logger.debug("Retry request...");
-            return this.getForEntity(url, responseType, uriVariables);
-        }
-
-        recordRequestTime();
-
-        return forEntity;
-    }
-
-    private void recordRequestTime() {
-        requestThrottling.recordRequestTime();
+        return response;
     }
 
     private void throttleRequests() {
         long waitTime = requestThrottling.calculateWaitTime();
 
         while (waitTime > 0L) {
-            try {
-                if (logger.isDebugEnabled()) logger.debug("Throttling: have to wait {} milliseconds", waitTime);
-
-                Thread.sleep(waitTime);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
+            waitTime(waitTime);
             waitTime = requestThrottling.calculateWaitTime();
+        }
+    }
+
+    private void waitTime(long waitTime) {
+        try {
+            if (logger.isDebugEnabled()) logger.debug("Throttling: have to wait {} milliseconds", waitTime);
+
+            Thread.sleep(waitTime);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

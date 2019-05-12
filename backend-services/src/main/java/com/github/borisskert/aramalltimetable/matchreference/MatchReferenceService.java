@@ -29,21 +29,45 @@ public class MatchReferenceService {
         this.matchReferenceStore = matchReferenceStore;
     }
 
-    public MatchReferences getMatchReferences(String summonerName) {
+    public MatchReferences getMatchReferencesBySummonerName(String summonerName) {
         Summoner summoner = summonerService.getSummoner(summonerName);
-        Optional<MatchReferences> maybeMatchList = matchReferenceStore.find(summoner.getAccountId());
+        return getMatchReferencesByAccountId(summoner.getAccountId());
+    }
+
+    public MatchReferences getMatchReferencesByAccountId(String accountId) {
+        Optional<MatchReferences> maybeMatchList = matchReferenceStore.find(accountId);
 
         if(maybeMatchList.isPresent()) {
             return maybeMatchList.get();
         } else {
-            List<MatchReference> matchReferences = loadMatchReferences(summoner.getAccountId());
+            List<MatchReference> matchReferences = loadMatchReferences(accountId);
             MatchReferences matchList = new MatchReferences();
             matchList.setMatches(matchReferences);
 
-            matchReferenceStore.create(summoner.getAccountId(), matchList);
+            matchReferenceStore.create(accountId, matchList);
 
             return matchList;
         }
+    }
+
+    public MatchReferences refreshMatchReferencesByAccountId(String accountId) {
+        Optional<MatchReferences> maybeMatchList = matchReferenceStore.find(accountId);
+        List<MatchReference> matchReferences = loadMatchReferences(accountId);
+
+        MatchReferences matchList;
+        if(maybeMatchList.isPresent()) {
+            matchList = maybeMatchList.get();
+            matchList.setMatches(matchReferences);
+
+            matchReferenceStore.update(accountId, matchList);
+        } else {
+            matchList = new MatchReferences();
+            matchList.setMatches(matchReferences);
+
+            matchReferenceStore.create(accountId, matchList);
+        }
+
+        return matchList;
     }
 
     private List<MatchReference> loadMatchReferences(String summonerAccountId) {
