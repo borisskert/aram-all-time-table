@@ -4,6 +4,9 @@ import com.github.borisskert.aramalltimetable.matchreference.MatchReferenceServi
 import com.github.borisskert.aramalltimetable.matchreference.MatchReferences;
 import com.github.borisskert.aramalltimetable.riot.LeagueOfLegendsClient;
 import com.github.borisskert.aramalltimetable.riot.model.Match;
+import com.github.borisskert.aramalltimetable.riot.model.MatchReference;
+import com.github.borisskert.aramalltimetable.riot.model.Summoner;
+import com.github.borisskert.aramalltimetable.summoner.SummonerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +18,19 @@ import java.util.stream.Collectors;
 public class MatchService {
 
     private final MatchReferenceService matchReferenceService;
+    private final SummonerService summonerService;
     private final MatchStore matchStore;
     private final LeagueOfLegendsClient client;
 
     @Autowired
-    public MatchService(MatchReferenceService matchReferenceService, MatchStore matchStore, LeagueOfLegendsClient client) {
+    public MatchService(
+            MatchReferenceService matchReferenceService,
+            SummonerService summonerService,
+            MatchStore matchStore,
+            LeagueOfLegendsClient client
+    ) {
         this.matchReferenceService = matchReferenceService;
+        this.summonerService = summonerService;
         this.matchStore = matchStore;
         this.client = client;
     }
@@ -51,5 +61,20 @@ public class MatchService {
 
             return loadedMatch;
         }
+    }
+
+    private void updateMatch(Long gameId) {
+        Match loadedMatch = client.getMatch(gameId);
+        matchStore.update(loadedMatch.getGameId().toString(), loadedMatch);
+    }
+
+    public void updateMatches(String summonerName) {
+        Summoner summoner = summonerService.getSummoner(summonerName);
+        MatchReferences matchReferences = matchReferenceService.refreshMatchReferencesByAccountId(summoner.getAccountId());
+
+        matchReferences.getMatches()
+                .stream()
+                .map(MatchReference::getGameId)
+                .forEach(this::updateMatch);
     }
 }

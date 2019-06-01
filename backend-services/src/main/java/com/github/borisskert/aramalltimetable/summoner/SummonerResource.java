@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/lol")
 public class SummonerResource {
 
-    private final SummonerService leagueOfLegends;
+    private final SummonerService summonerService;
 
     @Autowired
-    public SummonerResource(SummonerService leagueOfLegends) {
-        this.leagueOfLegends = leagueOfLegends;
+    public SummonerResource(SummonerService summonerService) {
+        this.summonerService = summonerService;
     }
 
     @GetMapping(value = "/summoner", params = "name")
     public Summoner getSummoner(@RequestParam("name") String summonerName) {
-        return leagueOfLegends.getSummoner(summonerName);
+        return summonerService.getSummoner(summonerName);
     }
 }

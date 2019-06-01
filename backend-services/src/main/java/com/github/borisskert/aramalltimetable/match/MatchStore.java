@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Service
 public class MatchStore {
-
+    private static final String MATCH_STORE_NAME = "match";
     private final Store store;
 
     @Autowired
@@ -18,10 +18,14 @@ public class MatchStore {
     }
 
     public Optional<Match> find(final String id) {
-        return store.find("match", id, Match.class);
+        return store.find(MATCH_STORE_NAME, id, Match.class);
     }
 
     public void create(final String id, final Match match) {
-        store.create("match", id, match);
+        store.create(MATCH_STORE_NAME, id, match);
+    }
+
+    public void update(final String id, final Match match) {
+        store.update(MATCH_STORE_NAME, id, match);
     }
 }

@@ -2,12 +2,13 @@ package com.github.borisskert.aramalltimetable.riot.model;
 
 import java.util.List;
 
-public class Match {
+public class Match implements Comparable<Match> {
 
     private Long gameId;
     private List<ParticipantIdentity> participantIdentities;
     private List<Team> teams;
     private List<Participant> participants;
+    private Long gameCreation;
 
     public Long getGameId() {
         return gameId;
@@ -23,6 +24,15 @@ public class Match {
 
     public List<Participant> getParticipants() {
         return participants;
+    }
+
+    public Long getGameCreation() {
+        return gameCreation;
+    }
+
+    @Override
+    public int compareTo(Match o) {
+        return Long.compare(this.gameCreation, o.gameCreation);
     }
 
     public static class ParticipantIdentity {

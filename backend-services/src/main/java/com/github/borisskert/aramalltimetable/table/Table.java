@@ -1,7 +1,6 @@
 package com.github.borisskert.aramalltimetable.table;
 
 import com.github.borisskert.aramalltimetable.queuestatistics.QueueStatistic;
-import com.github.borisskert.aramalltimetable.queuestatistics.QueueStatistics;
 import com.github.borisskert.aramalltimetable.riot.model.Queue;
 
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.Map;
 
 public class Table {
 
-    //    private List<TableEntry> entries = new ArrayList<>();
     private Map<String, TableEntry> entries = new HashMap<>();
     private String accountId;
 
@@ -35,15 +33,6 @@ public class Table {
         this.entries.put(accountId, entry);
     }
 
-    //
-//    public List<TableEntry> getEntries() {
-//        return entries;
-//    }
-//
-//    public void add(TableEntry entry) {
-//        entries.add(entry);
-//    }
-//
     public static class TableEntry {
         private String summonerName;
         private Map<Queue, QueueStatistic> queueStatistics = new HashMap<>();

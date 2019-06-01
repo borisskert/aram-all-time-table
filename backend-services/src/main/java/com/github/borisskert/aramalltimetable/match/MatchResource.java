@@ -2,10 +2,7 @@ package com.github.borisskert.aramalltimetable.match;
 
 import com.github.borisskert.aramalltimetable.riot.model.Match;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,5 +20,10 @@ public class MatchResource {
     @GetMapping(value = "/match", params = "summoner")
     public List<Match> getMatches(@RequestParam("summoner") String summonerName) {
         return matchService.getMatches(summonerName);
+    }
+
+    @PostMapping(value = "/match", params = "summoner")
+    public void updateMatches(@RequestParam("summoner") String summonerName) {
+        matchService.updateMatches(summonerName);
     }
 }
