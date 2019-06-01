@@ -1,5 +1,6 @@
 package com.github.borisskert.aramalltimetable.riot.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MatchList {
@@ -25,4 +26,14 @@ public class MatchList {
         return totalGames;
     }
 
+    public static MatchList empty() {
+        MatchList empty = new MatchList();
+
+        empty.startIndex = 0;
+        empty.endIndex = 0;
+        empty.totalGames = 0;
+        empty.matches = new ArrayList<>();
+
+        return empty;
+    }
 }

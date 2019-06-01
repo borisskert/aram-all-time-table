@@ -28,6 +28,8 @@ public class RiotRestTemplate {
 
     public <T> ResponseEntity<T> getForEntity(String url, Class<T> responseType, Map<String, ?> uriVariables) throws RestClientException {
         ResponseEntity<T> response = null;
+        RequestThrottling throttling = new RequestThrottling();
+
         do {
             requestThrottling.recordRequestTime();
             throttleRequests();
@@ -35,11 +37,11 @@ public class RiotRestTemplate {
             try {
                 response = restTemplate.getForEntity(url, responseType, uriVariables);
             } catch (HttpServerErrorException e) {
-                logger.debug("Retry request...");
-            } catch (HttpClientErrorException e) {
-                logger.debug("Wait a second...");
-                waitTime(1000L);
-                logger.debug("Retry request...");
+                logger.debug("Server error? wait for {} milliseconds until retry", throttling.getWaitTime());
+                throttling.waitUntilRetry();
+            } catch (HttpClientErrorException.TooManyRequests e) {
+                logger.debug("Too many requests, wait for {} milliseconds until retry", throttling.getWaitTime());
+                throttling.waitUntilRetry();
             }
         } while(response == null);
 
@@ -50,6 +52,7 @@ public class RiotRestTemplate {
         long waitTime = requestThrottling.calculateWaitTime();
 
         while (waitTime > 0L) {
+            waitTime = ((waitTime / 1000) + 1) * 1000;
             waitTime(waitTime);
             waitTime = requestThrottling.calculateWaitTime();
         }
@@ -62,6 +65,19 @@ public class RiotRestTemplate {
             Thread.sleep(waitTime);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public class RequestThrottling {
+        private Long waitTime = 1000L;
+
+        public Long getWaitTime() {
+            return waitTime;
+        }
+
+        public void waitUntilRetry() {
+            waitTime(waitTime);
+            waitTime = (long)(waitTime * 1.1);
         }
     }
 }

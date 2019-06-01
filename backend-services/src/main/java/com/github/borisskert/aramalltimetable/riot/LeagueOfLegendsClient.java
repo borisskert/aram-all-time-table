@@ -7,6 +7,7 @@ import com.github.borisskert.aramalltimetable.riot.model.Summoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
 
@@ -49,15 +50,20 @@ public class LeagueOfLegendsClient {
         uriVariables.put("beginIndex", beginIndex.toString());
         uriVariables.put("endIndex", endIndex.toString());
 
-        ResponseEntity<MatchList> response = restTemplate.getForEntity(
-                properties.getBaseUrl() + "/match/v4/matchlists/by-account/{accountId}" +
-                        "?api_key={apiKey}" +
-                        "&queue={queue}" +
-                        "&beginIndex={beginIndex}" +
-                        "&endIndex={endIndex}",
-                MatchList.class,
-                uriVariables
-        );
+        ResponseEntity<MatchList> response;
+        try {
+            response = restTemplate.getForEntity(
+                    properties.getBaseUrl() + "/match/v4/matchlists/by-account/{accountId}" +
+                            "?api_key={apiKey}" +
+                            "&queue={queue}" +
+                            "&beginIndex={beginIndex}" +
+                            "&endIndex={endIndex}",
+                    MatchList.class,
+                    uriVariables
+            );
+        } catch(HttpClientErrorException.NotFound e) {
+            return MatchList.empty();
+        }
 
         return response.getBody();
     }
