@@ -27,6 +27,10 @@ public class SummonerStore {
         return store.find(SUMMONER_STORE_NAME, Filters.eq("name", summonerName), Summoner.class);
     }
 
+    public Optional<Summoner> findByAccountId(final String accountId) {
+        return store.find(SUMMONER_STORE_NAME, Filters.eq("accountId", accountId), Summoner.class);
+    }
+
     public void create(Summoner summoner) {
         store.create(SUMMONER_STORE_NAME, summoner.getId(), summoner);
     }

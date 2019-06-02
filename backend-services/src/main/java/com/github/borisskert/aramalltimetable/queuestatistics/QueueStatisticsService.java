@@ -1,6 +1,8 @@
 package com.github.borisskert.aramalltimetable.queuestatistics;
 
+import com.github.borisskert.aramalltimetable.AramProperties;
 import com.github.borisskert.aramalltimetable.match.MatchService;
+import com.github.borisskert.aramalltimetable.match.SummonerMatches;
 import com.github.borisskert.aramalltimetable.riot.model.Match;
 import com.github.borisskert.aramalltimetable.riot.model.Queue;
 import com.github.borisskert.aramalltimetable.riot.model.Summoner;
@@ -17,19 +19,26 @@ public class QueueStatisticsService {
     private final SummonerService summonerService;
     private final MatchService matchService;
     private final QueueStatisticsStore queueStatisticsStore;
+    private final AramProperties properties;
 
     @Autowired
-    public QueueStatisticsService(SummonerService summonerService, MatchService matchService, QueueStatisticsStore queueStatisticsStore) {
+    public QueueStatisticsService(
+            SummonerService summonerService,
+            MatchService matchService,
+            QueueStatisticsStore queueStatisticsStore,
+            AramProperties properties
+    ) {
         this.summonerService = summonerService;
         this.matchService = matchService;
         this.queueStatisticsStore = queueStatisticsStore;
+        this.properties = properties;
     }
 
     public QueueStatistics getQueueStatisticsBySummonerName(String summonerName) {
         Summoner summoner = summonerService.getSummoner(summonerName);
         Optional<QueueStatistics> maybeQueueStatistics = queueStatisticsStore.find(summoner.getAccountId());
 
-        if(maybeQueueStatistics.isPresent()) {
+        if (maybeQueueStatistics.isPresent()) {
             return maybeQueueStatistics.get();
         } else {
             List<Match> matches = matchService.getMatches(summoner.getAccountId());
@@ -47,7 +56,7 @@ public class QueueStatisticsService {
         List<Match> matches = matchService.refreshMatches(summoner.getAccountId());
         QueueStatistics queueStatistics = calculateQueueStatistics(matches, summoner.getAccountId());
 
-        if(maybeQueueStatistics.isPresent()) {
+        if (maybeQueueStatistics.isPresent()) {
             queueStatisticsStore.update(summoner.getAccountId(), queueStatistics);
         } else {
             queueStatisticsStore.create(summoner.getAccountId(), queueStatistics);
@@ -57,7 +66,7 @@ public class QueueStatisticsService {
     public QueueStatistics getQueueStatisticsByAccountId(String accountId) {
         Optional<QueueStatistics> maybeQueueStatistics = queueStatisticsStore.find(accountId);
 
-        if(maybeQueueStatistics.isPresent()) {
+        if (maybeQueueStatistics.isPresent()) {
             return maybeQueueStatistics.get();
         } else {
             List<Match> matches = matchService.getMatchesByAccountId(accountId);
@@ -68,94 +77,20 @@ public class QueueStatisticsService {
             return queueStatistics;
         }
     }
-//
-//    private QueueStatistics calculateQueueStatistics(String accountId) {
-//        QueueStatistics queueStatistics = new QueueStatistics();
-//        List<Match> matches = matchService.getMatchesByAccountId(accountId);
-//
-//        int games = 0;
-//        int victories = 0;
-//        int defeats = 0;
-//
-//        QueueStatistic queueStatistic = new QueueStatistic();
-//        for (Match match : matches) {
-//            List<Match.ParticipantIdentity> identities = match.getParticipantIdentities();
-//            List<Match.Participant> participants = match.getParticipants();
-//
-//            Match.ParticipantIdentity ownIdentity = identities.stream()
-//                    .filter(i -> i.getPlayer().getAccountId().equals(accountId))
-//                    .findFirst()
-//                    .get();
-//
-//            Match.Participant ownParticipant = participants.stream()
-//                    .filter(p -> p.getParticipantId().equals(ownIdentity.getParticipantId()))
-//                    .findFirst()
-//                    .get();
-//
-//            Match.Team ownTeam = match.getTeams()
-//                    .stream()
-//                    .filter(t -> t.getTeamId().equals(ownParticipant.getTeamId()))
-//                    .findFirst()
-//                    .get();
-//
-//            if(ownTeam.getWin().equals("Win")) {
-//                victories++;
-//            } else {
-//                defeats++;
-//            }
-//
-//            games++;
-//        }
-//
-//        queueStatistic.setGames(games);
-//        queueStatistic.setVictories(victories);
-//        queueStatistic.setDefeats(defeats);
-//
-//        queueStatistics.getQueueStatistics().put(Queue.ARAM, queueStatistic);
-//
-//        return queueStatistics;
-//    }
-//
+
     private QueueStatistics calculateQueueStatistics(List<Match> matches, String accountId) {
         QueueStatistics queueStatistics = new QueueStatistics();
 
-        int games = 0;
-        int victories = 0;
-        int defeats = 0;
-
         QueueStatistic queueStatistic = new QueueStatistic();
+        SummonerMatches summonerMatches = new SummonerMatches(properties.getConsideredMatches(), accountId);
+
         for (Match match : matches) {
-            List<Match.ParticipantIdentity> identities = match.getParticipantIdentities();
-            List<Match.Participant> participants = match.getParticipants();
-
-            Match.ParticipantIdentity ownIdentity = identities.stream()
-                    .filter(i -> i.getPlayer().getAccountId().equals(accountId))
-                    .findFirst()
-                    .get();
-
-            Match.Participant ownParticipant = participants.stream()
-                    .filter(p -> p.getParticipantId().equals(ownIdentity.getParticipantId()))
-                    .findFirst()
-                    .get();
-
-            Match.Team ownTeam = match.getTeams()
-                    .stream()
-                    .filter(t -> t.getTeamId().equals(ownParticipant.getTeamId()))
-                    .findFirst()
-                    .get();
-
-            if(ownTeam.getWin().equals("Win")) {
-                victories++;
-            } else {
-                defeats++;
-            }
-
-            games++;
+            summonerMatches.addMatch(match);
         }
 
-        queueStatistic.setGames(games);
-        queueStatistic.setVictories(victories);
-        queueStatistic.setDefeats(defeats);
+        queueStatistic.setGames(summonerMatches.victories() + summonerMatches.defeats());
+        queueStatistic.setVictories(summonerMatches.victories());
+        queueStatistic.setDefeats(summonerMatches.defeats());
 
         queueStatistics.getQueueStatistics().put(Queue.ARAM, queueStatistic);
 

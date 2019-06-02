@@ -8,3 +8,6 @@ riot:
     - request-count: 20
       unit-count: 1
       unit: SECONDS
+
+aram:
+  considered-matches: 20

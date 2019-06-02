@@ -31,4 +31,14 @@ public class SummonerService {
             return loadedSummoner;
         }
     }
+
+    public Summoner getSummonerByAccountId(String accountId) {
+        Optional<Summoner> maybeSummoner = store.findByAccountId(accountId);
+
+        if (maybeSummoner.isPresent()) {
+            return maybeSummoner.get();
+        } else {
+            throw new RuntimeException("Should never happen");
+        }
+    }
 }

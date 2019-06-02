@@ -37,17 +37,29 @@ public class MatchService {
 
     public List<Match> getMatches(String summonerName) {
         MatchReferences matchReferences = matchReferenceService.getMatchReferencesBySummonerName(summonerName);
-        return matchReferences.getMatches().stream().map(m -> getMatch(m.getGameId())).collect(Collectors.toList());
+
+        return matchReferences.getMatches()
+                .stream()
+                .map(m -> getMatch(m.getGameId()))
+                .collect(Collectors.toList());
     }
 
     public List<Match> getMatchesByAccountId(String accountId) {
         MatchReferences matchReferences = matchReferenceService.getMatchReferencesByAccountId(accountId);
-        return matchReferences.getMatches().stream().map(m -> getMatch(m.getGameId())).collect(Collectors.toList());
+
+        return matchReferences.getMatches()
+                .stream()
+                .map(m -> getMatch(m.getGameId()))
+                .collect(Collectors.toList());
     }
 
     public List<Match> refreshMatches(String accountId) {
         MatchReferences matchReferences = matchReferenceService.refreshMatchReferencesByAccountId(accountId);
-        return matchReferences.getMatches().stream().map(m -> getMatch(m.getGameId())).collect(Collectors.toList());
+
+        return matchReferences.getMatches()
+                .stream()
+                .map(m -> getMatch(m.getGameId()))
+                .collect(Collectors.toList());
     }
 
     private Match getMatch(Long gameId) {
@@ -65,7 +77,15 @@ public class MatchService {
 
     private void updateMatch(Long gameId) {
         Match loadedMatch = client.getMatch(gameId);
-        matchStore.update(loadedMatch.getGameId().toString(), loadedMatch);
+
+        String id = gameId.toString();
+        Optional<Match> maybeMatch = matchStore.find(id);
+
+        if(maybeMatch.isPresent()) {
+            matchStore.update(id, loadedMatch);
+        } else {
+            matchStore.create(id, loadedMatch);
+        }
     }
 
     public void updateMatches(String summonerName) {

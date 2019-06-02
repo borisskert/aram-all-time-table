@@ -1,18 +1,17 @@
 package com.github.borisskert.aramalltimetable.match;
 
 import com.github.borisskert.aramalltimetable.riot.model.Match;
-import com.github.borisskert.aramalltimetable.riot.model.Summoner;
 
 import java.util.List;
 
 public class SummonerMatch {
 
     private final Match match;
-    private final Summoner summoner;
+    private final String summonerAccountId;
 
-    public SummonerMatch(Match match, Summoner summoner) {
+    public SummonerMatch(Match match, String summonerAccountId) {
         this.match = match;
-        this.summoner = summoner;
+        this.summonerAccountId = summonerAccountId;
     }
 
     public boolean isVictory() {
@@ -20,7 +19,7 @@ public class SummonerMatch {
 
         List<Match.Participant> participants = match.getParticipants();
         Match.ParticipantIdentity ownIdentity = identities.stream()
-                .filter(i -> i.getPlayer().getAccountId().equals(summoner.getAccountId()))
+                .filter(i -> i.getPlayer().getAccountId().equals(summonerAccountId))
                 .findFirst()
                 .get();
 
