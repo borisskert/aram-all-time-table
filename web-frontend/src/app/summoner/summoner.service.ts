@@ -5,6 +5,7 @@ import { AppConfig } from '../app-config';
 import { HttpClient } from '@angular/common/http';
 import { filter, map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
+import { QueueStatistics } from './components/queue-statistics';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,14 @@ export class SummonerService {
       `${this.appConfig.getBackendUrl()}/lol/summoner?name=${name}`
     ).pipe(
       map(response => this.convert(response))
+    );
+  }
+
+  public loadQueueStatistics(name: string): Observable<QueueStatistics> {
+    return this.httpClient.get<QueueStatisticsResponse>(
+      `${this.appConfig.getBackendUrl()}/lol/queuestatistics?summoner=${name}`
+    ).pipe(
+      map(response => response.queueStatistics.ARAM)
     );
   }
 
@@ -54,4 +63,15 @@ interface SummonerResponse {
   id: string;
   profileIconId: number;
   summonerLevel: number;
+}
+
+interface QueueStatisticsResponse {
+  queueStatistics: {
+    ARAM: {
+      victories: number;
+      defeats: number;
+      games: number;
+      winRate: number;
+    };
+  };
 }

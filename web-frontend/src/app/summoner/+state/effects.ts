@@ -4,6 +4,9 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { SummonerService } from '../summoner.service';
 import {
   GetSummonerName,
+  LoadQueueStatistics,
+  LoadQueueStatisticsFailure,
+  LoadQueueStatisticsSuccessful,
   LoadSummoner,
   LoadSummonerFailure,
   LoadSummonerSuccessful,
@@ -44,6 +47,17 @@ export class Effects {
   ), {
     dispatch: false
   });
+
+  loadQueueStatistics$: Observable<SummonerAction> = createEffect(() => this.actions$.pipe(
+    ofType<LoadSummonerSuccessful>(SummonerActionType.LoadSummonerSuccessful),
+    switchMap(({ payload }) => {
+      return this.summonerService.loadQueueStatistics(payload.summoner.name)
+        .pipe(
+          map(queueStatistics => new LoadQueueStatisticsSuccessful({ queueStatistics })),
+          catchError(() => of(new LoadQueueStatisticsFailure()))
+        );
+    })
+  ));
 
   constructor(
     private actions$: Actions,

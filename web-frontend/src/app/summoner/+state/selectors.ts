@@ -7,3 +7,8 @@ export const getSummoner = createSelector(
   getSummonerState,
   state => state.summoner
 );
+
+export const getQueueStatistics = createSelector(
+  getSummonerState,
+  state => state.queueStatistics
+);
