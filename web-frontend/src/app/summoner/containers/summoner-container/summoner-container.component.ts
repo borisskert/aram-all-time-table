@@ -4,7 +4,8 @@ import { Store } from '@ngrx/store';
 import { GetSummonerName, LoadSummoner } from '../../+state/actions';
 import { Observable } from 'rxjs';
 import { Summoner } from '../../summoner';
-import { getSummoner } from '../../+state/selectors';
+import { getQueueStatistics, getSummoner } from '../../+state/selectors';
+import { QueueStatistics } from '../../components/queue-statistics';
 
 @Component({
   selector: 'app-summoner-container',
@@ -14,11 +15,14 @@ import { getSummoner } from '../../+state/selectors';
 export class SummonerContainerComponent implements OnInit {
 
   public summoner$: Observable<Summoner>;
+  public queueStatistics$: Observable<QueueStatistics>;
 
   constructor(private readonly store: Store<State>) { }
 
   ngOnInit() {
     this.summoner$ = this.store.select(getSummoner);
+    this.queueStatistics$ = this.store.select(getQueueStatistics);
+
     this.store.dispatch(new GetSummonerName());
   }
 

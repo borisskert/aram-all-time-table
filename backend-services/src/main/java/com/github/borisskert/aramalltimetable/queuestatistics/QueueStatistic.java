@@ -1,5 +1,7 @@
 package com.github.borisskert.aramalltimetable.queuestatistics;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class QueueStatistic {
 
     private Integer victories;
@@ -28,5 +30,10 @@ public class QueueStatistic {
 
     public void setGames(Integer games) {
         this.games = games;
+    }
+
+    @JsonProperty("winRate")
+    public Double getWinRate() {
+        return ((double)victories / (double)games) * 100.0;
     }
 }

@@ -6,9 +6,10 @@ import { SummonerSelectComponent } from './components/summoner-select/summoner-s
 import { ReactiveFormsModule } from '@angular/forms';
 import { SummonerContainerComponent } from './containers/summoner-container/summoner-container.component';
 import { SummonerDetailsComponent } from './components/summoner-details/summoner-details.component';
+import { QueueStatisticsComponent } from './components/queue-statistics/queue-statistics.component';
 
 @NgModule({
-  declarations: [ SummonerSelectComponent, SummonerContainerComponent, SummonerDetailsComponent ],
+  declarations: [ SummonerSelectComponent, SummonerContainerComponent, SummonerDetailsComponent, QueueStatisticsComponent ],
   exports: [
     SummonerContainerComponent
   ],
