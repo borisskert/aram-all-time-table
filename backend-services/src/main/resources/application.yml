@@ -9,5 +9,8 @@ riot:
       unit-count: 1
       unit: SECONDS
 
+data-dragon:
+  base-url: http://ddragon.leagueoflegends.com/cdn/9.11.1
+
 aram:
   considered-matches: 20

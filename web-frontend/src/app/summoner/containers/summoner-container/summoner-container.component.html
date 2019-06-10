@@ -1,0 +1,2 @@
+<app-summoner-select *ngIf="!(summoner$ | async)" (summonerSelected)="onSummonerSelected($event)"></app-summoner-select>
+<app-summoner-details *ngIf="summoner$ | async" [summoner]="summoner$ | async"></app-summoner-details>

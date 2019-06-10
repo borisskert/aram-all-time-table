@@ -34,4 +34,8 @@ public class SummonerStore {
     public void create(Summoner summoner) {
         store.create(SUMMONER_STORE_NAME, summoner.getId(), summoner);
     }
+
+    public void update(Summoner summoner) {
+        store.update(SUMMONER_STORE_NAME, summoner.getId(), summoner);
+    }
 }

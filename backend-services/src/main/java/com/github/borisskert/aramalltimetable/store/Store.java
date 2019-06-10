@@ -47,6 +47,10 @@ public class Store {
         return document.map(d -> CloneUtils.deepClone(d, type, MONGO_ID_PROPERTY_NAME));
     }
 
+    public <T> T read(final String store, final String id, Class<T> type) {
+        return find(store, id, type).get();
+    }
+
     public <T> Optional<T> find(final String store, final Bson filter, Class<T> type) {
         Optional<Document> document = find(store, filter);
         return document.map(d -> CloneUtils.deepClone(d, type, MONGO_ID_PROPERTY_NAME));

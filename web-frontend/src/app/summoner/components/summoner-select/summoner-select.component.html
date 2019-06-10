@@ -1,0 +1,5 @@
+<form [formGroup]="summonerForm" (ngSubmit)="onSubmit()">
+  <label for="summonerName">Summoner name:</label>
+  <input id="summonerName" formControlName="summonerName">
+  <button type="submit">OK</button>
+</form>

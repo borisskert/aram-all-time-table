@@ -41,4 +41,15 @@ public class SummonerService {
             throw new RuntimeException("Should never happen");
         }
     }
+
+    public void updateSummoner(String summonerName) {
+        Summoner loadedSummoner = client.getSummoner(summonerName);
+        Optional<Summoner> maybeSummoner = store.findByName(summonerName);
+
+        if (maybeSummoner.isPresent()) {
+            store.update(loadedSummoner);
+        } else {
+            store.create(loadedSummoner);
+        }
+    }
 }

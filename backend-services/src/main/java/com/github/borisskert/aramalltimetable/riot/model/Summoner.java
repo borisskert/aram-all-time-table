@@ -5,6 +5,8 @@ public class Summoner {
     private String puuid;
     private String accountId;
     private String id;
+    private Integer profileIconId;
+    private Long summonerLevel;
 
     public String getName() {
         return name;
@@ -20,5 +22,13 @@ public class Summoner {
 
     public String getId() {
         return id;
+    }
+
+    public Integer getProfileIconId() {
+        return profileIconId;
+    }
+
+    public Long getSummonerLevel() {
+        return summonerLevel;
     }
 }
