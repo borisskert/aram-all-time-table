@@ -10,12 +10,20 @@ describe('SummonerDetailsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ SummonerDetailsComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SummonerDetailsComponent);
     component = fixture.componentInstance;
+
+    component.summoner = {
+      name: 'my summoner',
+      accountId: 'my summoner id',
+      level: 123,
+      profileIcon: 'my summoner icon'
+    };
+
     fixture.detectChanges();
   });
 

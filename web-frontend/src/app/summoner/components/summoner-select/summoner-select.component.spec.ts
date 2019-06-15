@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SummonerSelectComponent } from './summoner-select.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('SummonerSelectComponent', () => {
   let component: SummonerSelectComponent;
@@ -8,7 +9,12 @@ describe('SummonerSelectComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SummonerSelectComponent ]
+      imports: [
+        ReactiveFormsModule,
+      ],
+      declarations: [
+        SummonerSelectComponent
+      ]
     })
     .compileComponents();
   }));

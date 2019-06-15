@@ -8,14 +8,24 @@ describe('QueueStatisticsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ QueueStatisticsComponent ]
+      declarations: [
+        QueueStatisticsComponent
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(QueueStatisticsComponent);
     component = fixture.componentInstance;
+
+    component.queueStatistics = {
+      winRate: 50.0,
+      defeats: 10,
+      victories: 10,
+      games: 20,
+    };
+
     fixture.detectChanges();
   });
 
