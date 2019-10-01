@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { filter, map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QueueStatistics } from './components/queue-statistics';
+import { QueueRecords } from './components/queue-records';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,12 @@ export class SummonerService {
       `${this.appConfig.getBackendUrl()}/lol/queuestatistics?summoner=${name}`
     ).pipe(
       map(response => response.queueStatistics.ARAM)
+    );
+  }
+
+  public loadQueueRecords(name: string): Observable<QueueRecords> {
+    return this.httpClient.get<QueueRecords>(
+      `${this.appConfig.getBackendUrl()}/lol/records?summoner=${name}`
     );
   }
 

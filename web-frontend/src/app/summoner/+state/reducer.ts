@@ -18,6 +18,13 @@ export function reducer(state = initialState, action: SummonerAction): SummonerS
       };
     }
 
+    case SummonerActionType.LoadQueueRecordsSuccessful: {
+      return {
+        ...state,
+        queueRecords: action.payload.queueRecords,
+      };
+    }
+
     default:
       return state;
   }

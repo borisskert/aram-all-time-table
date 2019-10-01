@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import { Summoner } from '../summoner';
 import { QueueStatistics } from '../components/queue-statistics';
+import { QueueRecords } from '../components/queue-records';
 
 export enum SummonerActionType {
   LoadSummoner = '[Summoner] Load Summoner',
@@ -10,6 +11,9 @@ export enum SummonerActionType {
   LoadQueueStatistics = '[Summoner] Load Queue Statistics',
   LoadQueueStatisticsSuccessful = '[Summoner] Load Queue Statistics Successful',
   LoadQueueStatisticsFailure = '[Summoner] Load Queue Statistics Failure',
+  LoadQueueRecords = '[Summoner] Load Queue Records',
+  LoadQueueRecordsSuccessful = '[Summoner] Load Queue Records Successful',
+  LoadQueueRecordsFailure = '[Summoner] Load Queue Records Failure',
 }
 
 export type SummonerAction =
@@ -20,6 +24,9 @@ export type SummonerAction =
   | LoadQueueStatistics
   | LoadQueueStatisticsSuccessful
   | LoadQueueStatisticsFailure
+  | LoadQueueRecords
+  | LoadQueueRecordsSuccessful
+  | LoadQueueRecordsFailure
   ;
 
 export class LoadSummoner implements Action {
@@ -56,4 +63,20 @@ export class LoadQueueStatisticsSuccessful implements Action {
 
 export class LoadQueueStatisticsFailure implements Action {
   readonly type = SummonerActionType.LoadQueueStatisticsFailure;
+}
+
+export class LoadQueueRecords implements Action {
+  readonly type = SummonerActionType.LoadQueueRecords;
+
+  constructor(public payload: { summonerName: string }) {}
+}
+
+export class LoadQueueRecordsSuccessful implements Action {
+  readonly type = SummonerActionType.LoadQueueRecordsSuccessful;
+
+  constructor(public payload: { queueRecords: QueueRecords }) {}
+}
+
+export class LoadQueueRecordsFailure implements Action {
+  readonly type = SummonerActionType.LoadQueueRecordsFailure;
 }

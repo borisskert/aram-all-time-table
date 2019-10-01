@@ -7,9 +7,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SummonerContainerComponent } from './containers/summoner-container/summoner-container.component';
 import { SummonerDetailsComponent } from './components/summoner-details/summoner-details.component';
 import { QueueStatisticsComponent } from './components/queue-statistics/queue-statistics.component';
+import { QueueRecordsComponent } from './components/queue-records/queue-records.component';
 
 @NgModule({
-  declarations: [ SummonerSelectComponent, SummonerContainerComponent, SummonerDetailsComponent, QueueStatisticsComponent ],
+  declarations: [
+    SummonerSelectComponent,
+    SummonerContainerComponent,
+    SummonerDetailsComponent,
+    QueueStatisticsComponent,
+    QueueRecordsComponent,
+  ],
   exports: [
     SummonerContainerComponent
   ],
@@ -19,4 +26,4 @@ import { QueueStatisticsComponent } from './components/queue-statistics/queue-st
     EffectsModule.forFeature([ Effects ]),
   ]
 })
-export class SummonerModule { }
+export class SummonerModule {}

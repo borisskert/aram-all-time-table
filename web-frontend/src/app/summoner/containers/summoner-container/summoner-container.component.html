@@ -1,3 +1,4 @@
-<app-summoner-select *ngIf="!(summoner$ | async)" (summonerSelected)="onSummonerSelected($event)"></app-summoner-select>
+<app-summoner-select *ngIf="(summoner$ | async) === null" (summonerSelected)="onSummonerSelected($event)"></app-summoner-select>
 <app-summoner-details *ngIf="summoner$ | async" [summoner]="summoner$ | async"></app-summoner-details>
 <app-queue-statistics *ngIf="queueStatistics$ | async" [queueStatistics]="queueStatistics$ | async"></app-queue-statistics>
+<app-queue-records *ngIf="queueRecords$ | async" [queueRecords]="queueRecords$ | async"></app-queue-records>

@@ -12,3 +12,8 @@ export const getQueueStatistics = createSelector(
   getSummonerState,
   state => state.queueStatistics
 );
+
+export const getQueueRecords = createSelector(
+  getSummonerState,
+  state => state.queueRecords
+);
