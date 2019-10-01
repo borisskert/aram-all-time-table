@@ -1,0 +1,12 @@
+name: aram-statistics CI
+
+on: [push]
+
+jobs:
+  build:
+    name: build backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: xlui/action-maven-cli/jdk8@master
+        args: clean package
