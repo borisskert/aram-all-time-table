@@ -18,9 +18,4 @@ public class TableResource {
     public Table createTable(@RequestParam("summoner") String summonerName) {
         return tableService.getTableBySummonerName(summonerName);
     }
-
-    @PostMapping(value = "/table", params = "summoner")
-    public void updateTable(@RequestParam("summoner") String summonerName) {
-//        tableService.refreshTableBySummonerName(summonerName);
-    }
 }

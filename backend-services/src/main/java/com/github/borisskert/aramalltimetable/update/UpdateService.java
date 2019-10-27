@@ -7,6 +7,7 @@ import com.github.borisskert.aramalltimetable.queuestatistics.QueueStatisticsSer
 import com.github.borisskert.aramalltimetable.records.RecordsService;
 import com.github.borisskert.aramalltimetable.riot.model.Summoner;
 import com.github.borisskert.aramalltimetable.summoner.SummonerService;
+import com.github.borisskert.aramalltimetable.table.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class UpdateService {
     private final QueueStatisticsService queueStatisticsService;
     private final HistoryService historyService;
     private final RecordsService recordsService;
+    private final TableService tableService;
 
     @Autowired
     public UpdateService(
@@ -27,7 +29,8 @@ public class UpdateService {
             MatchService matchService,
             QueueStatisticsService queueStatisticsService,
             HistoryService historyService,
-            RecordsService recordsService
+            RecordsService recordsService,
+            TableService tableService
     ) {
         this.summonerService = summonerService;
         this.matchReferenceService = matchReferenceService;
@@ -35,6 +38,7 @@ public class UpdateService {
         this.queueStatisticsService = queueStatisticsService;
         this.historyService = historyService;
         this.recordsService = recordsService;
+        this.tableService = tableService;
     }
 
     public void update(String summonerName) {
@@ -48,5 +52,6 @@ public class UpdateService {
         queueStatisticsService.refreshQueueStatisticsByAccountId(accountId);
         historyService.updateHistoryByAccountId(accountId);
         recordsService.updateRecordsByAccountId(accountId);
+        tableService.updateTableByAccountId(accountId);
     }
 }
