@@ -7,6 +7,7 @@ export enum SummonerActionType {
   LoadSummoner = '[Summoner] Load Summoner',
   LoadSummonerSuccessful = '[Summoner] Load Summoner Successful',
   LoadSummonerFailure = '[Summoner] Load Summoner Failure',
+  LoadSummonerNotFound = '[Summoner] Load Summoner Not Found',
   GetSummonerName = '[Summoner] Get Summoner Name',
   LoadQueueStatistics = '[Summoner] Load Queue Statistics',
   LoadQueueStatisticsSuccessful = '[Summoner] Load Queue Statistics Successful',
@@ -14,12 +15,16 @@ export enum SummonerActionType {
   LoadQueueRecords = '[Summoner] Load Queue Records',
   LoadQueueRecordsSuccessful = '[Summoner] Load Queue Records Successful',
   LoadQueueRecordsFailure = '[Summoner] Load Queue Records Failure',
+  UpdateSummoner = '[Summoner] Update Summoner',
+  UpdateSummonerSuccessful = '[Summoner] Update Summoner Successful',
+  UpdateSummonerFailure = '[Summoner] Update Summoner Failure',
 }
 
 export type SummonerAction =
   | LoadSummoner
   | LoadSummonerSuccessful
   | LoadSummonerFailure
+  | LoadSummonerNotFound
   | GetSummonerName
   | LoadQueueStatistics
   | LoadQueueStatisticsSuccessful
@@ -27,6 +32,9 @@ export type SummonerAction =
   | LoadQueueRecords
   | LoadQueueRecordsSuccessful
   | LoadQueueRecordsFailure
+  | UpdateSummoner
+  | UpdateSummonerSuccessful
+  | UpdateSummonerFailure
   ;
 
 export class LoadSummoner implements Action {
@@ -43,6 +51,12 @@ export class LoadSummonerSuccessful implements Action {
 
 export class LoadSummonerFailure implements Action {
   readonly type = SummonerActionType.LoadSummonerFailure;
+}
+
+export class LoadSummonerNotFound implements Action {
+  readonly type = SummonerActionType.LoadSummonerNotFound;
+
+  constructor(public payload: { summonerName: string }) {}
 }
 
 export class GetSummonerName implements Action {
@@ -79,4 +93,20 @@ export class LoadQueueRecordsSuccessful implements Action {
 
 export class LoadQueueRecordsFailure implements Action {
   readonly type = SummonerActionType.LoadQueueRecordsFailure;
+}
+
+export class UpdateSummoner implements Action {
+  readonly type = SummonerActionType.UpdateSummoner;
+
+  constructor(public payload: { summonerName: string }) {}
+}
+
+export class UpdateSummonerSuccessful implements Action {
+  readonly type = SummonerActionType.UpdateSummonerSuccessful;
+
+  constructor(public payload: { summonerName: string }) {}
+}
+
+export class UpdateSummonerFailure implements Action {
+  readonly type = SummonerActionType.UpdateSummonerFailure;
 }

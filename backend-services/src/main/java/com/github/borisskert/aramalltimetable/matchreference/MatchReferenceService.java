@@ -36,26 +36,15 @@ public class MatchReferenceService {
 
     public MatchReferences getMatchReferencesByAccountId(String accountId) {
         Optional<MatchReferences> maybeMatchList = matchReferenceStore.find(accountId);
-
-        if(maybeMatchList.isPresent()) {
-            return maybeMatchList.get();
-        } else {
-            List<MatchReference> matchReferences = loadMatchReferences(accountId);
-            MatchReferences matchList = new MatchReferences();
-            matchList.setMatches(matchReferences);
-
-            matchReferenceStore.create(accountId, matchList);
-
-            return matchList;
-        }
+        return maybeMatchList.orElseGet(MatchReferences::new);
     }
 
-    public MatchReferences refreshMatchReferencesByAccountId(String accountId) {
+    public void refreshMatchReferencesByAccountId(String accountId) {
         Optional<MatchReferences> maybeMatchList = matchReferenceStore.find(accountId);
         List<MatchReference> matchReferences = loadMatchReferences(accountId);
 
         MatchReferences matchList;
-        if(maybeMatchList.isPresent()) {
+        if (maybeMatchList.isPresent()) {
             matchList = maybeMatchList.get();
             matchList.setMatches(matchReferences);
 
@@ -66,8 +55,6 @@ public class MatchReferenceService {
 
             matchReferenceStore.create(accountId, matchList);
         }
-
-        return matchList;
     }
 
     private List<MatchReference> loadMatchReferences(String summonerAccountId) {

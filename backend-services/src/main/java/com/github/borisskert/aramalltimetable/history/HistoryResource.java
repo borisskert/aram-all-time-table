@@ -18,9 +18,4 @@ public class HistoryResource {
     public History getHistory(@RequestParam("summoner") String summonerName) {
         return historyService.getHistory(summonerName);
     }
-
-    @PostMapping(value = "/history", params = "summoner")
-    public void updateHistory(@RequestParam("summoner") String summonerName) {
-        historyService.updateHistory(summonerName);
-    }
 }

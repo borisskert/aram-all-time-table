@@ -8,6 +8,7 @@ import { SummonerContainerComponent } from './containers/summoner-container/summ
 import { SummonerDetailsComponent } from './components/summoner-details/summoner-details.component';
 import { QueueStatisticsComponent } from './components/queue-statistics/queue-statistics.component';
 import { QueueRecordsComponent } from './components/queue-records/queue-records.component';
+import { SummonerUpdateComponent } from './components/summoner-update/summoner-update.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { QueueRecordsComponent } from './components/queue-records/queue-records.
     SummonerDetailsComponent,
     QueueStatisticsComponent,
     QueueRecordsComponent,
+    SummonerUpdateComponent,
   ],
   exports: [
     SummonerContainerComponent

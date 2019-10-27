@@ -1,6 +1,7 @@
 package com.github.borisskert.aramalltimetable.records;
 
 import com.github.borisskert.aramalltimetable.AramProperties;
+import com.github.borisskert.aramalltimetable.NotFoundException;
 import com.github.borisskert.aramalltimetable.history.History;
 import com.github.borisskert.aramalltimetable.history.HistoryService;
 import com.github.borisskert.aramalltimetable.riot.model.Summoner;
@@ -32,31 +33,23 @@ public class RecordsService {
         this.recordsStore = recordsStore;
     }
 
-    public Records getRecords(String summonerName) {
+    public Records getRecords(String summonerName) throws NotFoundException {
         Summoner summoner = summonerService.getSummoner(summonerName);
         Optional<Records> maybeRecords = recordsStore.find(summoner.getAccountId());
 
-        if(maybeRecords.isPresent()) {
+        if (maybeRecords.isPresent()) {
             return maybeRecords.get();
+        } else {
+            throw new NotFoundException("Cannot find records for summoner '" + summonerName + "'");
         }
-
-        History history = historyService.getHistoryForAccountId(summoner.getAccountId());
-        Records records = createRecords(history);
-
-        recordsStore.create(records);
-
-        return records;
     }
 
-    public void updateRecords(String summonerName) {
-        Summoner summoner = summonerService.getSummoner(summonerName);
-        Optional<Records> maybeRecords = recordsStore.find(summoner.getAccountId());
-
-        historyService.updateHistoryForAccountId(summoner.getAccountId());
-        History history = historyService.getHistoryForAccountId(summoner.getAccountId());
+    public void updateRecordsByAccountId(String accountId) {
+        History history = historyService.getHistoryForAccountId(accountId);
         Records records = createRecords(history);
 
-        if(maybeRecords.isPresent()) {
+        Optional<Records> maybeRecords = recordsStore.find(accountId);
+        if (maybeRecords.isPresent()) {
             recordsStore.update(records);
         } else {
             recordsStore.create(records);
@@ -82,7 +75,7 @@ public class RecordsService {
             maxWinStreak = Math.max(maxWinStreak, entry.getWinStreak());
             maxLoseStreak = Math.max(maxLoseStreak, entry.getLoseStreak());
 
-            if(games > properties.getConsideredMatches()) {
+            if (games > properties.getConsideredMatches()) {
                 maxWinRate = Math.max(maxWinRate, entry.getAbsoluteWinRate());
                 minWinRate = Math.min(minWinRate, entry.getAbsoluteWinRate());
                 maxFormWinRate = Math.max(maxFormWinRate, entry.getFormWinRate());

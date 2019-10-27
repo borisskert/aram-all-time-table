@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { State } from '../../../+state/contract';
 import { Store } from '@ngrx/store';
-import { GetSummonerName, LoadSummoner } from '../../+state/actions';
+import { GetSummonerName, LoadSummoner, UpdateSummoner } from '../../+state/actions';
 import { Observable } from 'rxjs';
 import { Summoner } from '../../summoner';
 import { getQueueRecords, getQueueStatistics, getSummoner } from '../../+state/selectors';
@@ -31,5 +31,11 @@ export class SummonerContainerComponent implements OnInit {
 
   onSummonerSelected(summonerName: string) {
     this.store.dispatch(new LoadSummoner({ summonerName }));
+  }
+
+  onUpdate() {
+    this.summoner$.subscribe(summoner => {
+      this.store.dispatch(new UpdateSummoner({ summonerName: summoner.name }));
+    }).unsubscribe();
   }
 }

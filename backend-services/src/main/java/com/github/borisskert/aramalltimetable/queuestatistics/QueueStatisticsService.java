@@ -1,6 +1,7 @@
 package com.github.borisskert.aramalltimetable.queuestatistics;
 
 import com.github.borisskert.aramalltimetable.AramProperties;
+import com.github.borisskert.aramalltimetable.NotFoundException;
 import com.github.borisskert.aramalltimetable.match.MatchService;
 import com.github.borisskert.aramalltimetable.match.SummonerMatches;
 import com.github.borisskert.aramalltimetable.riot.model.Match;
@@ -34,32 +35,27 @@ public class QueueStatisticsService {
         this.properties = properties;
     }
 
-    public QueueStatistics getQueueStatisticsBySummonerName(String summonerName) {
+    public QueueStatistics getQueueStatisticsBySummonerName(String summonerName) throws NotFoundException {
         Summoner summoner = summonerService.getSummoner(summonerName);
         Optional<QueueStatistics> maybeQueueStatistics = queueStatisticsStore.find(summoner.getAccountId());
 
         if (maybeQueueStatistics.isPresent()) {
             return maybeQueueStatistics.get();
         } else {
-            List<Match> matches = matchService.getMatches(summoner.getAccountId());
-            QueueStatistics queueStatistics = calculateQueueStatistics(matches, summoner.getAccountId());
-
-            queueStatisticsStore.create(summoner.getAccountId(), queueStatistics);
-
-            return queueStatistics;
+            throw new NotFoundException("Cannot find queue-statistics for summoner '" + summonerName + "'");
         }
     }
 
-    public void refreshQueueStatisticsBySummonerName(String summonerName) {
-        Summoner summoner = summonerService.getSummoner(summonerName);
-        Optional<QueueStatistics> maybeQueueStatistics = queueStatisticsStore.find(summoner.getAccountId());
-        List<Match> matches = matchService.refreshMatches(summoner.getAccountId());
-        QueueStatistics queueStatistics = calculateQueueStatistics(matches, summoner.getAccountId());
+    public void refreshQueueStatisticsByAccountId(String summonerAccountId) {
+        Optional<QueueStatistics> maybeQueueStatistics = queueStatisticsStore.find(summonerAccountId);
+
+        List<Match> matches = matchService.getMatchesByAccountId(summonerAccountId);
+        QueueStatistics queueStatistics = calculateQueueStatistics(matches, summonerAccountId);
 
         if (maybeQueueStatistics.isPresent()) {
-            queueStatisticsStore.update(summoner.getAccountId(), queueStatistics);
+            queueStatisticsStore.update(summonerAccountId, queueStatistics);
         } else {
-            queueStatisticsStore.create(summoner.getAccountId(), queueStatistics);
+            queueStatisticsStore.create(summonerAccountId, queueStatistics);
         }
     }
 
@@ -69,12 +65,7 @@ public class QueueStatisticsService {
         if (maybeQueueStatistics.isPresent()) {
             return maybeQueueStatistics.get();
         } else {
-            List<Match> matches = matchService.getMatchesByAccountId(accountId);
-            QueueStatistics queueStatistics = calculateQueueStatistics(matches, accountId);
-
-            queueStatisticsStore.create(accountId, queueStatistics);
-
-            return queueStatistics;
+            throw new NotFoundException("Cannot find queue-statistics for account-id '" + accountId + "'");
         }
     }
 

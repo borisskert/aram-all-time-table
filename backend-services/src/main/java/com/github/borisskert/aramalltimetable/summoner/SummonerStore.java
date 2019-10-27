@@ -3,6 +3,7 @@ package com.github.borisskert.aramalltimetable.summoner;
 import com.github.borisskert.aramalltimetable.riot.model.Summoner;
 import com.github.borisskert.aramalltimetable.store.Store;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.TextSearchOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,11 @@ public class SummonerStore {
     }
 
     public Optional<Summoner> findByName(final String summonerName) {
-        return store.find(SUMMONER_STORE_NAME, Filters.eq("name", summonerName), Summoner.class);
+        return store.find(
+                SUMMONER_STORE_NAME,
+                Filters.regex("name", "^" + summonerName + " *$", "ig"),
+                Summoner.class
+        );
     }
 
     public Optional<Summoner> findByAccountId(final String accountId) {

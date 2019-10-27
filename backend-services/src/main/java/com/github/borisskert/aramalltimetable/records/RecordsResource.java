@@ -19,9 +19,4 @@ public class RecordsResource {
     public Records getRecords(@RequestParam("summoner") String summonerName) {
         return recordsService.getRecords(summonerName);
     }
-
-    @PostMapping(value = "/records", params = "summoner")
-    public void updateRecords(@RequestParam("summoner") String summonerName) {
-        recordsService.updateRecords(summonerName);
-    }
 }

@@ -1,6 +1,7 @@
 package com.github.borisskert.aramalltimetable.summoner;
 
 import com.github.borisskert.aramalltimetable.riot.model.Summoner;
+import com.github.borisskert.aramalltimetable.update.UpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,10 +10,12 @@ import org.springframework.web.bind.annotation.*;
 public class SummonerResource {
 
     private final SummonerService summonerService;
+    private final UpdateService updateService;
 
     @Autowired
-    public SummonerResource(SummonerService summonerService) {
+    public SummonerResource(SummonerService summonerService, UpdateService updateService) {
         this.summonerService = summonerService;
+        this.updateService = updateService;
     }
 
     @GetMapping(value = "/summoner", params = "name")
@@ -22,6 +25,6 @@ public class SummonerResource {
 
     @PostMapping(value = "/summoner", params = "name")
     public void updateSummoner(@RequestParam("name") String summonerName) {
-        summonerService.updateSummoner(summonerName);
+        updateService.update(summonerName);
     }
 }

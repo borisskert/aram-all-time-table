@@ -21,9 +21,4 @@ public class MatchResource {
     public List<Match> getMatches(@RequestParam("summoner") String summonerName) {
         return matchService.getMatches(summonerName);
     }
-
-    @PostMapping(value = "/match", params = "summoner")
-    public void updateMatches(@RequestParam("summoner") String summonerName) {
-        matchService.updateMatches(summonerName);
-    }
 }

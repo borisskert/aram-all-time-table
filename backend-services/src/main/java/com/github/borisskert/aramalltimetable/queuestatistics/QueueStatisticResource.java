@@ -18,9 +18,4 @@ public class QueueStatisticResource {
     public QueueStatistics createStats(@RequestParam("summoner") String summonerName) {
         return queueStatisticsService.getQueueStatisticsBySummonerName(summonerName);
     }
-
-    @PostMapping(value = "/queuestatistics", params = "summoner")
-    public void updateStats(@RequestParam("summoner") String summonerName) {
-        queueStatisticsService.refreshQueueStatisticsBySummonerName(summonerName);
-    }
 }

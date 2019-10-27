@@ -1,5 +1,6 @@
 package com.github.borisskert.aramalltimetable.history;
 
+import com.github.borisskert.aramalltimetable.NotFoundException;
 import com.github.borisskert.aramalltimetable.match.MatchService;
 import com.github.borisskert.aramalltimetable.match.SummonerMatches;
 import com.github.borisskert.aramalltimetable.match.SummonerMatchesFactory;
@@ -36,42 +37,24 @@ public class HistoryService {
 
     public History getHistory(String summonerName) {
         Summoner summoner = summonerService.getSummoner(summonerName);
-        return getHistory(summoner);
+        return getHistoryForAccountId(summoner.getAccountId());
     }
 
     public History getHistoryForAccountId(String accountId) {
-        Summoner summoner = summonerService.getSummonerByAccountId(accountId);
-        return getHistory(summoner);
-    }
-
-    private History getHistory(Summoner summoner) {
-        Optional<History> maybeHistory = historyStore.find(summoner.getAccountId());
+        Optional<History> maybeHistory = historyStore.find(accountId);
 
         if (maybeHistory.isPresent()) {
             return maybeHistory.get();
+        } else {
+            throw new NotFoundException("Cannot find history for account-id '" + accountId + "'");
         }
-
-        History createdHistory = createHistory(summoner);
-        historyStore.create(createdHistory);
-
-        return createdHistory;
     }
 
-    public void updateHistory(String summonerName) {
-        Summoner summoner = summonerService.getSummoner(summonerName);
-        updateHistory(summoner);
-    }
+    public void updateHistoryByAccountId(String accountId) {
+        List<Match> matches = matchService.getMatchesByAccountId(accountId);
 
-    public void updateHistoryForAccountId(String accountId) {
-        Summoner summoner = summonerService.getSummonerByAccountId(accountId);
-        updateHistory(summoner);
-    }
-
-    private void updateHistory(Summoner summoner) {
-        List<Match> matches = matchService.refreshMatches(summoner.getAccountId());
-
-        Optional<History> maybeHistory = historyStore.find(summoner.getAccountId());
-        History freshHistory = historyFromMatches(summoner, matches);
+        Optional<History> maybeHistory = historyStore.find(accountId);
+        History freshHistory = historyFromMatches(accountId, matches);
 
         if (maybeHistory.isPresent()) {
             historyStore.update(freshHistory);
@@ -80,17 +63,12 @@ public class HistoryService {
         }
     }
 
-    private History createHistory(Summoner summoner) {
-        List<Match> matches = matchService.getMatchesByAccountId(summoner.getAccountId());
-        return historyFromMatches(summoner, matches);
-    }
-
-    private History historyFromMatches(Summoner summoner, List<Match> matches) {
+    private History historyFromMatches(String accountId, List<Match> matches) {
         History history = new History();
-        history.setAccountId(summoner.getAccountId());
+        history.setAccountId(accountId);
 
         Collections.sort(matches);
-        SummonerMatches summonerMatches = summonerMatchesFactory.createForSummoner(summoner.getAccountId());
+        SummonerMatches summonerMatches = summonerMatchesFactory.createForSummoner(accountId);
 
         for (Match match : matches) {
             summonerMatches.addMatch(match);

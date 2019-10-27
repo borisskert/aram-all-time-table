@@ -3,14 +3,22 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { SummonerService } from '../summoner.service';
 import {
-  GetSummonerName, LoadQueueRecordsFailure, LoadQueueRecordsSuccessful,
+  GetSummonerName,
+  LoadQueueRecords,
+  LoadQueueRecordsFailure,
+  LoadQueueRecordsSuccessful,
+  LoadQueueStatistics,
   LoadQueueStatisticsFailure,
   LoadQueueStatisticsSuccessful,
   LoadSummoner,
   LoadSummonerFailure,
+  LoadSummonerNotFound,
   LoadSummonerSuccessful,
   SummonerAction,
-  SummonerActionType
+  SummonerActionType,
+  UpdateSummoner,
+  UpdateSummonerFailure,
+  UpdateSummonerSuccessful
 } from './actions';
 import { Observable, of } from 'rxjs';
 
@@ -18,12 +26,22 @@ import { Observable, of } from 'rxjs';
 export class Effects {
 
   loadSummoner$: Observable<SummonerAction> = createEffect(() => this.actions$.pipe(
-    ofType<LoadSummoner>(SummonerActionType.LoadSummoner),
+    ofType<LoadSummoner | UpdateSummonerSuccessful>(
+      SummonerActionType.LoadSummoner,
+      SummonerActionType.UpdateSummonerSuccessful
+    ),
     switchMap(({ payload }) => {
       return this.summonerService.loadSummoner(payload.summonerName)
         .pipe(
           map(summoner => new LoadSummonerSuccessful({ summoner })),
-          catchError(() => of(new LoadSummonerFailure()))
+          catchError(error => {
+              if (error.status === 404) {
+                return of(new LoadSummonerNotFound({ summonerName: payload.summonerName }));
+              } else {
+                return of(new LoadSummonerFailure());
+              }
+            }
+          )
         );
     })
   ));
@@ -48,23 +66,54 @@ export class Effects {
   });
 
   loadQueueStatistics$: Observable<SummonerAction> = createEffect(() => this.actions$.pipe(
-    ofType<LoadSummonerSuccessful>(SummonerActionType.LoadSummonerSuccessful),
+    ofType<LoadQueueStatistics>(SummonerActionType.LoadQueueStatistics),
     switchMap(({ payload }) => {
-      return this.summonerService.loadQueueStatistics(payload.summoner.name)
+      return this.summonerService.loadQueueStatistics(payload.summonerName)
         .pipe(
           map(queueStatistics => new LoadQueueStatisticsSuccessful({ queueStatistics })),
-          catchError(() => of(new LoadQueueStatisticsFailure()))
+          catchError(error => {
+            return of(new LoadQueueStatisticsFailure());
+          })
         );
     })
   ));
 
   loadQueueRecords$: Observable<SummonerAction> = createEffect(() => this.actions$.pipe(
-    ofType<LoadSummonerSuccessful>(SummonerActionType.LoadSummonerSuccessful),
+    ofType<LoadQueueRecords>(SummonerActionType.LoadQueueRecords),
     switchMap(({ payload }) => {
-      return this.summonerService.loadQueueRecords(payload.summoner.name)
+      return this.summonerService.loadQueueRecords(payload.summonerName)
         .pipe(
           map(queueRecords => new LoadQueueRecordsSuccessful({ queueRecords })),
-          catchError(() => of(new LoadQueueRecordsFailure()))
+          catchError(error => {
+            return of(new LoadQueueRecordsFailure());
+          })
+        );
+    })
+  ));
+
+  loadQueueStatisticsAfterSummonerLoad$: Observable<SummonerAction> = createEffect(() => this.actions$.pipe(
+    ofType<LoadSummonerSuccessful>(SummonerActionType.LoadSummonerSuccessful),
+    switchMap(({ payload }) => {
+      return of(new LoadQueueStatistics({ summonerName: payload.summoner.name }));
+    })
+  ));
+
+  loadQueueRecordsAfterSummonerLoad$: Observable<SummonerAction> = createEffect(() => this.actions$.pipe(
+    ofType<LoadSummonerSuccessful>(SummonerActionType.LoadSummonerSuccessful),
+    switchMap(({ payload }) => {
+      return of(new LoadQueueRecords({ summonerName: payload.summoner.name }));
+    })
+  ));
+
+  updateSummoner$: Observable<SummonerAction> = createEffect(() => this.actions$.pipe(
+    ofType<UpdateSummoner | LoadSummonerNotFound>(SummonerActionType.UpdateSummoner, SummonerActionType.LoadSummonerNotFound),
+    switchMap(({ payload }) => {
+      return this.summonerService.updateSummoner(payload.summonerName)
+        .pipe(
+          switchMap(() => [
+            new UpdateSummonerSuccessful({ summonerName: payload.summonerName }),
+          ]),
+          catchError(() => of(new UpdateSummonerFailure()))
         );
     })
   ));

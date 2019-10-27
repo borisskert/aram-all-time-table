@@ -1,5 +1,6 @@
 package com.github.borisskert.aramalltimetable.riot;
 
+import com.github.borisskert.aramalltimetable.ForbiddenException;
 import com.github.borisskert.aramalltimetable.riot.model.ProfileIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -7,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -22,7 +24,7 @@ public class DataDragonClient {
         this.restTemplate = restTemplate;
     }
 
-    public ProfileIcon loadProfileIcon(Integer id) {
+    public ProfileIcon loadProfileIcon(Integer id) throws ForbiddenException {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getMessageConverters().add(
                 new ByteArrayHttpMessageConverter());
@@ -30,11 +32,16 @@ public class DataDragonClient {
         HashMap<String, String> uriVariables = new HashMap<>();
         uriVariables.put("profileIconId", id.toString());
 
-        ResponseEntity<byte[]> response = restTemplate.getForEntity(
-                properties.getBaseUrl() + "/img/profileicon/{profileIconId}.png",
-                byte[].class,
-                uriVariables
-        );
+        ResponseEntity<byte[]> response;
+        try {
+            response = restTemplate.getForEntity(
+                    properties.getBaseUrl() + "/img/profileicon/{profileIconId}.png",
+                    byte[].class,
+                    uriVariables
+            );
+        } catch(HttpClientErrorException.Forbidden exception) {
+            throw new ForbiddenException("Loading profile icon '" + id + "' is forbidden");
+        }
 
         byte[] content = response.getBody();
 

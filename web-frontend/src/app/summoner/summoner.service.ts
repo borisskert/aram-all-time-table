@@ -53,6 +53,13 @@ export class SummonerService {
     });
   }
 
+  public updateSummoner(summoner: string): Observable<void> {
+    return this.httpClient.post<void>(
+      `${this.appConfig.getBackendUrl()}/lol/summoner?name=${summoner}`,
+      {}
+    );
+  }
+
   private convert({ name, accountId, profileIconId, summonerLevel }: SummonerResponse): Summoner {
     return {
       name,

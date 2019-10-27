@@ -17,7 +17,7 @@ describe('SummonerDetailsComponent', () => {
     fixture = TestBed.createComponent(SummonerDetailsComponent);
     component = fixture.componentInstance;
 
-    component.summoner = {
+    component.summonerName = {
       name: 'my summoner',
       accountId: 'my summoner id',
       level: 123,
