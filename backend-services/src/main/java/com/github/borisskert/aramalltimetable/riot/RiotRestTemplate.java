@@ -43,7 +43,7 @@ public class RiotRestTemplate {
                 logger.debug("Too many requests, wait for {} milliseconds until retry", throttling.getWaitTime());
                 throttling.waitUntilRetry();
             }
-        } while(response == null);
+        } while (response == null);
 
         return response;
     }
@@ -77,7 +77,7 @@ public class RiotRestTemplate {
 
         public void waitUntilRetry() {
             waitTime(waitTime);
-            waitTime = (long)(waitTime * 1.1);
+            waitTime = (long) (waitTime * 1.1);
         }
     }
 }

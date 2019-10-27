@@ -70,7 +70,7 @@ public class LeagueOfLegendsClient {
                     MatchList.class,
                     uriVariables
             );
-        } catch(HttpClientErrorException.NotFound e) {
+        } catch (HttpClientErrorException.NotFound e) {
             return MatchList.empty();
         }
 

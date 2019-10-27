@@ -12,9 +12,13 @@ import javax.validation.constraints.Size;
 @Validated
 public class DataDragonProperties {
 
+    public static final String LATEST_DATA_DRAGON_VERSION = "latest";
+
     @NotNull
     @Size(min = 1)
     private String baseUrl;
+
+    private String version = LATEST_DATA_DRAGON_VERSION;
 
 
     public String getBaseUrl() {
@@ -23,5 +27,13 @@ public class DataDragonProperties {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }
